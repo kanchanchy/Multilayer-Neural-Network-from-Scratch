@@ -7,6 +7,13 @@ import random
 import numpy.matlib
 from utils import *
 
+random.seed(1)
+np.random.seed(1)
+
+train_samples = 1500
+val_samples = 500
+test_samples = 1000
+
 #loading train and test data
 digits = list(range(10))
 trX, trY, tsX, tsY, valX, valY = mnist(train_samples,val_samples,test_samples, digits=digits)
@@ -135,7 +142,6 @@ costs,val_costs, parameters = multi_layer_network(train_data, train_label,val_da
 	num_iterations=num_iterations, learning_rate= learning_rate)
 
 # compute the accuracy for training set and testing set
-
 
 mode ='test'
 train_Pred = classify(train_data, parameters,mode,drop_prob)

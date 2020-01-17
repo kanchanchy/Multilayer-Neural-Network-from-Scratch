@@ -10,15 +10,13 @@ import numpy.matlib
 def initialize(net_dims):
     '''
     Inputs:
-    net_dims - Array containing the dimensions of the network. The values of the array represent the number of nodes in 
-    each layer. For Example, if a Neural network contains 784 nodes in the input layer , 800 in the first hidden layer,
-    500 in the secound hidden layer and 10 in the output layer, then net_dims =[784,800,500,10]. 
+    net_dims - Array containing the dimensions of the network. 
     Outputs:
     parameters - Dictionary element for storing the Weights and bias of each layer of the network'''
     numLayers = len(net_dims)
     parameters = {}
     for l in range(numLayers-1):
-    	weights = np.random.normal(size = (net_dims[l + 1], net_dims[l]))
+        weights = np.random.normal(size = (net_dims[l + 1], net_dims[l]))
     	bias = np.zeros((net_dims[l + 1], 1))
     	parameters["W"+str(l+1)] = weights
     	parameters["b"+str(l+1)] = bias
@@ -33,11 +31,11 @@ def relu(Z):
     Returns: 
         A is activation. numpy.ndarray (n, m) representing 'm' samples each of 'n' dimension
         cache is a dictionary with {"Z", Z}'''
-        cache = {}
-        matrix_zero = np.zeros_like(Z)
-        A = np.maximum(matrix_zero, Z)
-        cache["Z"] = Z
-        return A, cache
+    cache = {}
+    matrix_zero = np.zeros_like(Z)
+    A = np.maximum(matrix_zero, Z)
+    cache["Z"] = Z
+    return A, cache
 
 #computing gradient of relu activation function
 def relu_der(dA, cache):
@@ -64,10 +62,10 @@ def linear(Z):
     Returns: 
         A is activation. numpy.ndarray (n, m)
         cache is a dictionary with {"Z", Z}'''
-        A = Z
-        cache = {}
-        cache["Z"] = Z
-        return A, cache
+    A = Z
+    cache = {}
+    cache["Z"] = Z
+    return A, cache
 
 #computing derivative of linear activation function
 def linear_der(dA, cache):
@@ -151,51 +149,51 @@ def softmax_cross_entropy_loss_der(Y, cache):
 
 #implementing forward dropout
 def dropout_forward(A, drop_prob, mode='train'):
-        '''
-        Using the 'inverted dropout' technique to implement dropout regularization.
-        Inputs:
-                A - Activation matrix
-                drop_prob - the probability of dropping a neuron's activation.
+    '''
+    Using the 'inverted dropout' technique to implement dropout regularization.
+    Inputs:
+        A - Activation matrix
+        drop_prob - the probability of dropping a neuron's activation.
                 
-                mode - Dropout acts differently in training and testing mode. Hence, mode is a parameter which
-                takes in only 2 values, 'train' or 'test'
-        Outputs:
-                out - Output of shape(n,m) same as input but with some values masked out.
-                cache - a tuple which stores the values that are required in the backward pass.'''
-                mask = None
-                out = None
+        mode - Dropout acts differently in training and testing mode. Hence, mode is a parameter which
+        takes in only 2 values, 'train' or 'test'
+    Outputs:
+        out - Output of shape(n,m) same as input but with some values masked out.
+        cache - a tuple which stores the values that are required in the backward pass.'''
+        mask = None
+        out = None
 
-                if mode == 'train':
-                	mask = np.random.rand(*A.shape) > drop_prob
-                	out = np.multiply(A, mask)
-                	out = np.divide(out, (1 - drop_prob))
+    if mode == 'train':
+        mask = np.random.rand(*A.shape) > drop_prob
+        out = np.multiply(A, mask)
+        out = np.divide(out, (1 - drop_prob))
 
-                elif mode == 'test':
-                	out = np.array(A, copy=True)
-                else:
-                	raise ValueError("Mode value not set, set it to 'train' or 'test'")
-                	cache = (mode, mask)
-                	out = out.astype(A.dtype, copy=False)
-                	return out, cache
+    elif mode == 'test':
+        out = np.array(A, copy=True)
+    else:
+        raise ValueError("Mode value not set, set it to 'train' or 'test'")
+    cache = (mode, mask)
+    out = out.astype(A.dtype, copy=False)
+    return out, cache
 
 #implementing backward
 def dropout_backward(cache, dout):
-        '''
-        Backward pass for the inverted dropout.
-        Inputs: 
-              dout: derivatives from the upstream layers of dimension (n,m).
-              cache: contains the mask, input, and chosen dropout probability from the forward pass.
-        Outputs:
+    '''
+    Backward pass for the inverted dropout.
+    Inputs: 
+        dout: derivatives from the upstream layers of dimension (n,m).
+        cache: contains the mask, input, and chosen dropout probability from the forward pass.
+    Outputs:
         dA = derivative from the layer of dimension (n,m)'''
-        dA = None
-        mode, mask = cache
-        if mode == 'train':
-        	dA = np.multiply(dout, mask)
-        elif mode == 'test':
-        	dA = np.array(dout, copy=True)
-        else:
-        	raise ValueError("Mode value not set, set it to 'train' or 'test'")
-        	return dA
+    dA = None
+    mode, mask = cache
+    if mode == 'train':
+        dA = np.multiply(dout, mask)
+    elif mode == 'test':
+        dA = np.array(dout, copy=True)
+    else:
+        raise ValueError("Mode value not set, set it to 'train' or 'test'")
+    return dA
 
 #forward propagation for one layer
 def linear_forward(A, W, b):
@@ -209,11 +207,11 @@ def linear_forward(A, W, b):
     Returns:
         out = dropout(WA + b), where out is the numpy.ndarray (n_out, m) dimensions
         cache - a dictionary containing the inputs A'''
-        Z = np.dot(W, A) + b
+    Z = np.dot(W, A) + b
 
-        cache = {}
-        cache["A"] = A
-        return Z, cache
+    cache = {}
+    cache["A"] = A
+    return Z, cache
 
 #forward propagation with activation for one layer
 def layer_forward(A_prev, W, b, activation, drop_prob, mode):
@@ -230,23 +228,23 @@ def layer_forward(A_prev, W, b, activation, drop_prob, mode):
         cache - a dictionary containing the cache from the linear and the nonlinear propagation
         to be used for derivative'''
 
-        Z, lin_cache = linear_forward(A_prev, W, b)
+    Z, lin_cache = linear_forward(A_prev, W, b)
 
-        if activation == "relu":
-        	A, act_cache = relu(Z)
-        	A, drop_cache =  dropout_forward(A, drop_prob, mode)
+    if activation == "relu":
+        A, act_cache = relu(Z)
+        A, drop_cache =  dropout_forward(A, drop_prob, mode)
 
-        elif activation == "linear":
-        	A, act_cache = linear(Z)
-        	drop_cache = None
+    elif activation == "linear":
+        A, act_cache = linear(Z)
+        drop_cache = None
 
 
-        	cache = {}
-        	cache["lin_cache"] = lin_cache
-        	cache["act_cache"] = act_cache
-        	cache["drop_cache"] = drop_cache
+    cache = {}
+    cache["lin_cache"] = lin_cache
+    cache["act_cache"] = act_cache
+    cache["drop_cache"] = drop_cache
 
-        	return A, cache
+    return A, cache
 
 #multi-layer forward propagation
 def multi_layer_forward(X, parameters,drop_prob, mode):
@@ -257,19 +255,19 @@ def multi_layer_forward(X, parameters,drop_prob, mode):
         parameters - dictionary of network parameters {"W1":[..],"b1":[..],"W2":[..],"b2":[..]...}
     Returns:
         AL - numpy.ndarray (c,m)  - outputs of the last fully connected layer before softmax
-            where c is number of categories and m is number of samples in the batch
-            caches - a dictionary of associated caches of parameters and network inputs'''
-            L = len(parameters)//2  
-            A = X
-            caches = []
+        where c is number of categories and m is number of samples in the batch
+        caches - a dictionary of associated caches of parameters and network inputs'''
+    L = len(parameters)//2  
+    A = X
+    caches = []
 
-            for l in range(1,L):
-            	A, cache = layer_forward(A, parameters["W"+str(l)], parameters["b"+str(l)], "relu", drop_prob, mode)
-            	caches.append(cache)
+    for l in range(1,L):
+        A, cache = layer_forward(A, parameters["W"+str(l)], parameters["b"+str(l)], "relu", drop_prob, mode)
+        caches.append(cache)
 
-            	AL, cache = layer_forward(A, parameters["W"+str(L)], parameters["b"+str(L)], "linear",drop_prob, mode)
-            	caches.append(cache)
-            	return AL, caches
+    AL, cache = layer_forward(A, parameters["W"+str(L)], parameters["b"+str(L)], "linear",drop_prob, mode)
+    caches.append(cache)
+    return AL, caches
 
 #backward propagation for one layer
 def linear_backward(dZ, cache, W, b):
@@ -286,11 +284,11 @@ def linear_backward(dZ, cache, W, b):
         dA_prev - numpy.ndarray (p,m) the derivative to the previous layer
         dW - numpy.ndarray (n,p) the gradient of W 
         db - numpy.ndarray (n, 1) the gradient of b'''      
-        A = cache['A']
-        dA_prev = np.dot(W.T, dZ)
-        dW = np.dot(dZ, A.T)
-        db = np.sum(dZ, axis = 1, keepdims = True)
-        return dA_prev, dW, db
+    A = cache['A']
+    dA_prev = np.dot(W.T, dZ)
+    dW = np.dot(dZ, A.T)
+    db = np.sum(dZ, axis = 1, keepdims = True)
+    return dA_prev, dW, db
 
 #backward propagation for one layer with activation
 def layer_backward(dA, cache, W, b, activation):
@@ -306,21 +304,19 @@ def layer_backward(dA, cache, W, b, activation):
         dA_prev - numpy.ndarray (p,m) the derivative to the previous layer
         dW - numpy.ndarray (n,p) the gradient of W 
         db - numpy.ndarray (n, 1) the gradient of b'''
-        lin_cache = cache["lin_cache"]
-        act_cache = cache["act_cache"]
-        drop_cache = cache["drop_cache"]
+    lin_cache = cache["lin_cache"]
+    act_cache = cache["act_cache"]
+    drop_cache = cache["drop_cache"]
 
-        if activation == "relu":
+    if activation == "relu":
+        dA = dropout_backward(drop_cache, dA)
+        dZ = relu_der(dA, act_cache)
 
-        	dA = dropout_backward(drop_cache, dA)
-        	dZ = relu_der(dA, act_cache)
+    elif activation == "linear":
+        dZ = linear_der(dA, act_cache)
 
-        elif activation == "linear":
-
-        	dZ = linear_der(dA, act_cache)
-
-        	dA_prev, dW, db = linear_backward(dZ, lin_cache, W, b)
-        	return dA_prev, dW, db
+    dA_prev, dW, db = linear_backward(dZ, lin_cache, W, b)
+    return dA_prev, dW, db
 
 #multi-layer backward propagation
 def multi_layer_backward(dAL, caches, parameters):
@@ -335,17 +331,14 @@ def multi_layer_backward(dAL, caches, parameters):
         gradients - dictionary of gradient of network parameters 
         {"dW1":[..],"db1":[..],"dW2":[..],"db2":[..],...}'''
 
-        L = len(caches) 
-        gradients = {}
-        dA = dAL
-        activation = "linear"
-        for l in reversed(range(1,L+1)):
-        	dA, gradients["dW"+str(l)], gradients["db"+str(l)] = \
-        	layer_backward(dA, caches[l-1], \
-        		parameters["W"+str(l)],parameters["b"+str(l)],\
-        		activation)
-        	activation = "relu"
-        	return gradients
+    L = len(caches) 
+    gradients = {}
+    dA = dAL
+    activation = "linear"
+    for l in reversed(range(1,L+1)):
+        dA, gradients["dW"+str(l)], gradients["db"+str(l)] = layer_backward(dA, caches[l-1], parameters["W"+str(l)], parameters["b"+str(l)], activation)
+        activation = "relu"
+    return gradients
 
 #prediction
 def classify(X, parameters,mode,drop_prob):
@@ -377,7 +370,7 @@ def initialize_velocity(parameters):
     	v["dW" + str(l + 1)] = np.zeros_like(parameters["W" + str(l+1)])
     	v["db" + str(l + 1)] = np.zeros_like(parameters["b" + str(l+1)])
 
-    	return v
+    return v
 
 #updating parameters with momentum
 def update_parameters_with_momentum(parameters, gradients, epoch, v, beta, learning_rate, decay_rate=0.01):
@@ -395,7 +388,7 @@ def update_parameters_with_momentum(parameters, gradients, epoch, v, beta, learn
         decay_rate - rate of decay of step size - not necessary - in case you want to use
         '''
 
-        alpha = learning_rate*(1/(1+decay_rate*epoch))
+    alpha = learning_rate*(1/(1+decay_rate*epoch))
     L = len(parameters) // 2 # number of layers in the neural networks
     
     for i in range(L):
@@ -406,7 +399,7 @@ def update_parameters_with_momentum(parameters, gradients, epoch, v, beta, learn
         #Calculation for bias
         V_bias = beta*v["db" + str(i + 1)] + (1 - beta)*gradients["db" + str(i + 1)]
         parameters["b" + str(i + 1)] = parameters["b" + str(i + 1)] - alpha*V_bias
-        return parameters, alpha, v
+    return parameters, alpha, v
 
 #implementing multi-layer neural networks
 def multi_layer_network(X, Y,valX, valY, net_dims, drop_prob, mode, num_iterations=500, learning_rate=0.2, decay_rate=0.00005):
@@ -428,21 +421,20 @@ def multi_layer_network(X, Y,valX, valY, net_dims, drop_prob, mode, num_iteratio
         val_costs - list of validation costs over training
         parameters - dictionary of trained network parameters'''
 
-        parameters = initialize(net_dims)
-        A0 = X
-        costs = []
-        val_costs = []
-        num_classes = 10
-        Y_one_hot = one_hot(Y,num_classes)
-        valY_one_hot = one_hot(valY,num_classes)
-        alpha = learning_rate
-        beta = 0.9
-        for ii in range(num_iterations):        
-
+    parameters = initialize(net_dims)
+    A0 = X
+    costs = []
+    val_costs = []
+    num_classes = 10
+    Y_one_hot = one_hot(Y,num_classes)
+    valY_one_hot = one_hot(valY,num_classes)
+    alpha = learning_rate
+    beta = 0.9
+    for ii in range(num_iterations):
         #Forward Propagation with training data
         Z, cache_1 = multi_layer_forward(A0, parameters, drop_prob, mode)
         AL, cache_2, cost = softmax_cross_entropy_loss(Z, Y_one_hot)
-        
+
         #Backward Propagation with training data
         dZ = softmax_cross_entropy_loss_der(Y_one_hot, cache_2)
         gradients = multi_layer_backward(dZ, cache_1, parameters)
@@ -454,18 +446,9 @@ def multi_layer_network(X, Y,valX, valY, net_dims, drop_prob, mode, num_iteratio
         AL_, cache_val, val_cost = softmax_cross_entropy_loss(Z_, valY_one_hot)
 
         if ii % 10 == 0:
-        	costs.append(cost)
+            costs.append(cost)
         	val_costs.append(val_cost)
-        	if ii % 10 == 0:
-        		print("Cost at iteration %i is: %.05f, learning rate: %.05f" %(ii, cost, alpha))
+        if ii % 10 == 0:
+        	print("Cost at iteration %i is: %.05f, learning rate: %.05f" %(ii, cost, alpha))
 
-        		return costs, val_costs, parameters
-
-
-
-        		random.seed(1)
-        		np.random.seed(1)
-
-        		train_samples = 1500
-        		val_samples = 500
-        		test_samples = 1000
+    return costs, val_costs, parameters
