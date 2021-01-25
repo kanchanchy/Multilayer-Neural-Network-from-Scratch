@@ -1,4 +1,4 @@
-# Multi-layer Neural Network from Sketch using Numpy
+# Multi-layer Neural Network from Scratch using Numpy
 
 This repository shows the sketch implementation of a multi-layer neural network using numpy. The utils.py file implements various functions used in a deep neural network. The multi_layer_nn_sketch.py file tests the functions implemented in utils.py file. It also trains and tests a multi-layer neural network using the functions from utils.py.
 
